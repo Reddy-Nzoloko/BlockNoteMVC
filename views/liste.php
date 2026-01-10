@@ -7,7 +7,7 @@
 </head>
 <body class="bg-gray-100 p-8">
     <div class="max-w-2xl mx-auto">
-        <!-- <h1 class="text-3xl font-bold text-indigo-600 mb-6">📝 Mes Notes Flash</h1> -->
+        <!-- <h1 class="text-3xl font-bold text-indigo-600 mb-6"> Mes Notes Flash</h1> -->
         
         <div class="grid gap-4">
             <?php foreach ($notes as $note): ?>

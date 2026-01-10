@@ -16,7 +16,7 @@ class Note {
         $req = $this->db->query('SELECT * FROM notes ORDER BY date_creation DESC');
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
-    // Methode pour l'insertion
+    // Methode pour l'insertion des données dans la base de donnée 
     public function creer($titre, $contenu) {
     $req = $this->db->prepare('INSERT INTO notes (titre, contenu) VALUES (?, ?)');
     return $req->execute([$titre, $contenu]);
