@@ -11,13 +11,25 @@
         
         <div class="grid gap-4">
             <?php foreach ($notes as $note): ?>
-                <div class="bg-white p-5 rounded-lg shadow-md border-l-4 border-indigo-500">
-                    <h2 class="font-bold text-xl"><?= htmlspecialchars($note['titre']) ?></h2>
-                    <p class="text-gray-600 mt-2"><?= nl2br(htmlspecialchars($note['contenu'])) ?></p>
-                    <span class="text-xs text-gray-400 mt-4 block"><?= $note['date_creation'] ?></span>
-                </div>
-            <?php endforeach; ?>
+    <div class="bg-white p-5 rounded-lg shadow-md border-l-4 border-indigo-500 flex justify-between items-start">
+        <div>
+            <h2 class="font-bold text-xl"><?= htmlspecialchars($note['titre']) ?></h2>
+            <p class="text-gray-600 mt-2"><?= nl2br(htmlspecialchars($note['contenu'])) ?></p>
+            <span class="text-xs text-gray-400 mt-4 block"><?= $note['date_creation'] ?></span>
         </div>
+        
+        <div class="flex space-x-2">
+            <a href="index.php?action=editer&id=<?= $note['id'] ?>" class="text-blue-500 hover:text-blue-700">
+                ✏️
+            </a>
+            <a href="index.php?action=supprimer&id=<?= $note['id'] ?>" 
+               onclick="return confirm('Supprimer cette note ?')" 
+               class="text-red-500 hover:text-red-700">
+                🗑️
+            </a>
+        </div>
+    </div>
+<?php endforeach; ?>
     </div>
     <!-- Ajout de la note  -->
      <body class="bg-gray-100 p-8">

@@ -11,3 +11,22 @@ if (isset($_GET['action']) && $_GET['action'] == 'ajouter') {
     // Par défaut, on affiche la liste
     $controller->afficherAccueil();
 }
+// ... (sous l'action ajouter)
+switch($_GET['action']) {
+    case 'ajouter':
+        $controller->sauvegarder();
+        break;
+    case 'supprimer':
+        $controller->supprimerNote();
+        break;
+    case 'editer':
+        $controller->editerNote();
+        break;
+    case 'confirmer_modifier':
+        $controller->mettreAJour();
+        break;
+    default:
+        $controller->afficherAccueil();
+        break;
+}
+// ...
