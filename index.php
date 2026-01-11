@@ -29,4 +29,3 @@ switch($_GET['action']) {
         $controller->afficherAccueil();
         break;
 }
-// ...
