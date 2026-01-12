@@ -21,8 +21,8 @@ class Note {
     public function creer($titre, $contenu) {
     $req = $this->db->prepare('INSERT INTO notes (titre, contenu) VALUES (?, ?)');
     return $req->execute([$titre, $contenu]);
-
-    // Supprimer une note
+}
+    // Supprimer une note dans la bdd
 public function supprimer($id) {
     $req = $this->db->prepare('DELETE FROM notes WHERE id = ?');
     return $req->execute([$id]);
@@ -39,6 +39,5 @@ public function lireUne($id) {
 public function modifier($id, $titre, $contenu) {
     $req = $this->db->prepare('UPDATE notes SET titre = ?, contenu = ? WHERE id = ?');
     return $req->execute([$titre, $contenu, $id]);
-}
 }
 }
