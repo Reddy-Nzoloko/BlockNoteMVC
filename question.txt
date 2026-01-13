@@ -1,0 +1,1 @@
+Maintenant on doit faire évoluer le projet, une personne doit se connecter avant de faire n'importe quelle operation dans sa note et la connexion doit se faire via mot de pass hanché et adresse mail vous connessez la structure actuelle de notre base de donnée 
