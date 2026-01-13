@@ -11,7 +11,13 @@ switch($action) {
     case 'traiter_login': $auth->traiterLogin(); break;
     case 'logout': $auth->logout(); break;
     // Dans index.php, ajoutez ces cases au switch ($action) :
-
+case 'logout':
+        $auth->logout();
+        break;
+    case 'toggle':
+        $noteCtrl = new NoteController();
+        $noteCtrl->changerStatut();
+        break;
 case 'register':
     $auth->afficherRegister();
     break;

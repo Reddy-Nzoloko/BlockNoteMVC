@@ -15,6 +15,9 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL
 );
 
+-- ajout de la collone des statuts pour les taches ou alors notes dans tous les sens cv 
+ALTER TABLE notes ADD COLUMN statut TINYINT(1) DEFAULT 0; -- 0 = En cours, 1 = Terminé
+
 -- 2. Ajout de la colonne user_id dans la table notes
 ALTER TABLE notes ADD COLUMN user_id INT;
 
