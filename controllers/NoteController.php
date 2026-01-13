@@ -1,50 +1,64 @@
 <?php
+// controllers/NoteController.php
 require_once __DIR__ . '/../models/Note.php';
 
 class NoteController {
     
-    // Action : Afficher la liste
+    public function __construct() {
+        // On démarre la session une seule fois
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        // Sécurité : Si pas de session, retour au login
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit();
+        }
+    }
+
     public function afficherAccueil() {
         $model = new Note();
-        $notes = $model->lireToutes();
+        $notes = $model->lireToutesParUser($_SESSION['user_id']); 
         require __DIR__ . '/../views/liste.php';
     }
 
-    // Action : Sauvegarder une note
     public function sauvegarder() {
         if (!empty($_POST['titre']) && !empty($_POST['contenu'])) {
             $model = new Note();
-            $model->creer($_POST['titre'], $_POST['contenu']);
+            // On passe l'ID de l'utilisateur connecté
+            $model->creer($_POST['titre'], $_POST['contenu'], $_SESSION['user_id']);
         }
-        // Une fois fini, on redirige vers l'accueil pour voir la nouvelle note
         header('Location: index.php');
     }
-    // ... (reste du code)
 
-// Action : Supprimer
-public function supprimerNote() {
-    if (isset($_GET['id'])) {
-        $model = new Note();
-        $model->supprimer($_GET['id']);
+    public function supprimerNote() {
+        if (isset($_GET['id'])) {
+            $model = new Note();
+            $model->supprimer($_GET['id'], $_SESSION['user_id']);
+        }
+        header('Location: index.php');
     }
-    header('Location: index.php');
-}
 
-// Action : Afficher le formulaire de modification
-public function editerNote() {
-    if (isset($_GET['id'])) {
-        $model = new Note();
-        $note = $model->lireUne($_GET['id']);
-        require __DIR__ . '/../views/editer.php'; // On va créer cette vue
+    public function editerNote() {
+        if (isset($_GET['id'])) {
+            $model = new Note();
+            $note = $model->lireUne($_GET['id']);
+            
+            // Vérification de sécurité : est-ce bien la note de l'utilisateur ?
+            if ($note['user_id'] != $_SESSION['user_id']) {
+                header('Location: index.php');
+                exit();
+            }
+            require __DIR__ . '/../views/editer.php';
+        }
     }
-}
 
-// Action : Enregistrer les modifications
-public function mettreAJour() {
-    if (isset($_POST['id']) && !empty($_POST['titre'])) {
-        $model = new Note();
-        $model->modifier($_POST['id'], $_POST['titre'], $_POST['contenu']);
+    public function mettreAJour() {
+        if (isset($_POST['id']) && !empty($_POST['titre'])) {
+            $model = new Note();
+            $model->modifier($_POST['id'], $_POST['titre'], $_POST['contenu']);
+        }
+        header('Location: index.php');
     }
-    header('Location: index.php');
-}
 }
