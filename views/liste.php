@@ -26,6 +26,30 @@
             <textarea name="contenu" placeholder="Détails..." required class="w-full p-2 border mb-4 rounded h-20 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
             <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 rounded hover:bg-indigo-700">Enregistrer</button>
         </form>
+        <div class="mb-6">
+    <form action="index.php" method="GET" class="flex gap-2">
+        <input type="hidden" name="action" value="index">
+        
+        <div class="relative flex-grow">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                🔍
+            </span>
+            <input type="text" name="q" value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>" 
+                   placeholder="Rechercher une note..." 
+                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm">
+        </div>
+        
+        <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">
+            Filtrer
+        </button>
+
+        <?php if(!empty($_GET['q'])): ?>
+            <a href="index.php" class="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200">
+                Effacer
+            </a>
+        <?php endif; ?>
+    </form>
+</div>
 
         <div class="grid gap-4">
             <?php foreach ($notes as $note): ?>
