@@ -23,3 +23,21 @@ ALTER TABLE notes ADD COLUMN user_id INT;
 
 -- 3. (Optionnel) Créer un lien officiel entre les deux tables
 ALTER TABLE notes ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+-- 1. Création de la table des catégories
+CREATE TABLE categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL,
+    couleur VARCHAR(50) DEFAULT 'bg-gray-200 text-gray-800' -- Classe Tailwind
+);
+
+-- 2. Insertion de quelques catégories par défaut
+INSERT INTO categories (nom, couleur) VALUES 
+('Travail', 'bg-blue-100 text-blue-700'),
+('Personnel', 'bg-green-100 text-green-700'),
+('Idées', 'bg-purple-100 text-purple-700'),
+('Urgent', 'bg-red-100 text-red-700'),
+('Etude', 'bg-yellow-100 text-yellow-700'),
+('Sport', 'bg-orange-100 text-orange-700');
+
+-- 3. Ajout de la colonne category_id dans la table notes
+ALTER TABLE notes ADD COLUMN category_id INT;

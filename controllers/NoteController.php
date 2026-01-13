@@ -1,41 +1,47 @@
 <?php
 // controllers/NoteController.php
 require_once __DIR__ . '/../models/Note.php';
+require_once __DIR__ . '/../models/Category.php'; // Importation nécessaire ici
 
 class NoteController {
     
     public function __construct() {
-        // On démarre la session une seule fois
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         
-        // Sécurité : Si pas de session, retour au login
         if (!isset($_SESSION['user_id'])) {
             header('Location: index.php?action=login');
             exit();
         }
     }
 
-    // UNIQUE VERSION de afficherAccueil (avec gestion du tri)
+    // VERSION UNIQUE : Gère le tri, la recherche ET les catégories
     public function afficherAccueil() {
-    $ordre = (isset($_GET['tri']) && $_GET['tri'] == 'asc') ? 'ASC' : 'DESC';
-    
-    // On récupère le terme de recherche s'il existe
-    $recherche = isset($_GET['q']) ? $_GET['q'] : '';
+        $ordre = (isset($_GET['tri']) && $_GET['tri'] == 'asc') ? 'ASC' : 'DESC';
+        $recherche = isset($_GET['q']) ? $_GET['q'] : '';
 
-    $model = new Note();
-    // On passe maintenant 3 paramètres
-    $notes = $model->lireToutesParUser($_SESSION['user_id'], $ordre, $recherche); 
-    
-    require __DIR__ . '/../views/liste.php';
-}
+        $modelNote = new Note();
+        $modelCat = new Category();
 
+        // Récupère les notes filtrées
+        $notes = $modelNote->lireToutesParUser($_SESSION['user_id'], $ordre, $recherche);
+        // Récupère les catégories pour le formulaire
+        $categories = $modelCat->tout(); 
+
+        require __DIR__ . '/../views/liste.php';
+    }
+
+    // VERSION UNIQUE : Enregistre avec l'ID de catégorie
     public function sauvegarder() {
-        if (!empty($_POST['titre']) && !empty($_POST['contenu'])) {
+        if (!empty($_POST['titre']) && !empty($_POST['category_id'])) {
             $model = new Note();
-            // On passe l'ID de l'utilisateur connecté
-            $model->creer($_POST['titre'], $_POST['contenu'], $_SESSION['user_id']);
+            $model->creer(
+                $_POST['titre'], 
+                $_POST['contenu'], 
+                $_SESSION['user_id'], 
+                $_POST['category_id']
+            );
         }
         header('Location: index.php');
     }
@@ -50,10 +56,12 @@ class NoteController {
 
     public function editerNote() {
         if (isset($_GET['id'])) {
-            $model = new Note();
-            $note = $model->lireUne($_GET['id']);
+            $modelNote = new Note();
+            $modelCat = new Category();
             
-            // Vérification de sécurité : est-ce bien la note de l'utilisateur ?
+            $note = $modelNote->lireUne($_GET['id']);
+            $categories = $modelCat->tout(); // Utile si on veut changer la catégorie en éditant
+            
             if (!$note || $note['user_id'] != $_SESSION['user_id']) {
                 header('Location: index.php');
                 exit();
@@ -65,12 +73,12 @@ class NoteController {
     public function mettreAJour() {
         if (isset($_POST['id']) && !empty($_POST['titre'])) {
             $model = new Note();
+            // Optionnel : ajouter category_id ici si vous l'ajoutez dans le formulaire d'édition
             $model->modifier($_POST['id'], $_POST['titre'], $_POST['contenu']);
         }
         header('Location: index.php');
     }
 
-    // Action pour changer le statut (cocher/décocher)
     public function changerStatut() {
         if (isset($_GET['id'])) {
             $model = new Note();
@@ -78,4 +86,4 @@ class NoteController {
         }
         header('Location: index.php');
     }
-}
+} // Fin de la classe

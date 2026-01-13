@@ -13,31 +13,37 @@ class Note {
     }
 
     // VERSION UNIQUE ET FUSIONNÉE : Récupérer les notes avec option de tri
-   // Modifier cette fonction dans models/Note.php
-public function lireToutesParUser($userId, $ordre = 'DESC', $recherche = '') {
-    $sql = "SELECT * FROM notes WHERE user_id = ? ";
+  public function lireToutesParUser($userId, $ordre = 'DESC', $recherche = '') {
+    // On sélectionne les colonnes de notes ET le nom/couleur de la catégorie
+    $sql = "SELECT n.*, c.nom as cat_nom, c.couleur as cat_couleur 
+            FROM notes n 
+            LEFT JOIN categories c ON n.category_id = c.id 
+            WHERE n.user_id = ?";
+    
     $params = [$userId];
-
-    // Si une recherche est fournie, on ajoute une condition SQL
     if (!empty($recherche)) {
-        $sql .= " AND (titre LIKE ? OR contenu LIKE ?)";
-        $terme = "%$recherche%"; // Le terme peut être au début, au milieu ou à la fin
-        $params[] = $terme;
-        $params[] = $terme;
+        $sql .= " AND (n.titre LIKE ? OR n.contenu LIKE ?)";
+        $params[] = "%$recherche%";
+        $params[] = "%$recherche%";
     }
-
-    $sql .= " ORDER BY date_creation $ordre";
+    $sql .= " ORDER BY n.date_creation $ordre";
     
     $req = $this->db->prepare($sql);
     $req->execute($params);
     return $req->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Mettre à jour aussi la méthode creer() pour inclure category_id
+public function creer($titre, $contenu, $userId, $categoryId) {
+    $req = $this->db->prepare('INSERT INTO notes (titre, contenu, user_id, category_id) VALUES (?, ?, ?, ?)');
+    return $req->execute([$titre, $contenu, $userId, $categoryId]);
+}
+
     // On ajoute l'user_id lors de la création pour lier la note à l'utilisateur
-    public function creer($titre, $contenu, $userId) {
-        $req = $this->db->prepare('INSERT INTO notes (titre, contenu, user_id, statut) VALUES (?, ?, ?, 0)');
-        return $req->execute([$titre, $contenu, $userId]);
-    }
+    // public function creer($titre, $contenu, $userId) {
+    //     $req = $this->db->prepare('INSERT INTO notes (titre, contenu, user_id, statut) VALUES (?, ?, ?, 0)');
+    //     return $req->execute([$titre, $contenu, $userId]);
+    // }
 
     // Inverser le statut (0 = en cours, 1 = terminé)
     public function toggleStatut($id, $userId) {
