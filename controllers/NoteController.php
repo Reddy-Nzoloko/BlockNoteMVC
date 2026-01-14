@@ -33,26 +33,36 @@ class NoteController {
     }
 
     // VERSION UNIQUE : Enregistre avec l'ID de catégorie
-    public function sauvegarder() {
-        if (!empty($_POST['titre']) && !empty($_POST['category_id'])) {
-            $model = new Note();
-            $model->creer(
-                $_POST['titre'], 
-                $_POST['contenu'], 
-                $_SESSION['user_id'], 
-                $_POST['category_id']
-            );
-        }
-        header('Location: index.php');
+   public function sauvegarder() {
+    if (!empty($_POST['titre']) && !empty($_POST['category_id'])) {
+        $model = new Note();
+        $model->creer($_POST['titre'], $_POST['contenu'], $_SESSION['user_id'], $_POST['category_id']);
+        
+        $_SESSION['flash'] = [
+            'type' => 'success',
+            'message' => 'Nouvelle note enregistrée !'
+        ];
     }
+    header('Location: index.php');
+}
 
-    public function supprimerNote() {
-        if (isset($_GET['id'])) {
-            $model = new Note();
-            $model->supprimer($_GET['id'], $_SESSION['user_id']);
-        }
-        header('Location: index.php');
+    // Exemple pour la suppression
+public function supprimerNote() {
+    if (isset($_GET['id'])) {
+        $model = new Note();
+        $model->supprimer($_GET['id'], $_SESSION['user_id']);
+        
+        // On crée le message flash
+        $_SESSION['flash'] = [
+            'type' => 'success',
+            'message' => 'La note a été supprimée avec succès !'
+        ];
     }
+    header('Location: index.php');
+}
+
+// Exemple pour la sauvegarde
+
 
     public function editerNote() {
         if (isset($_GET['id'])) {
