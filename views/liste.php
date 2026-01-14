@@ -6,6 +6,36 @@
     <title>Mes Notes</title>
 </head>
 <body class="bg-gray-100">
+    <?php if (isset($_SESSION['flash'])): ?>
+    <div id="toast" class="fixed top-5 right-5 z-50 animate-bounce">
+        <div class="flex items-center p-4 mb-4 text-white rounded-lg shadow-lg 
+            <?= $_SESSION['flash']['type'] === 'success' ? 'bg-green-500' : 'bg-red-500' ?>">
+            
+            <div class="mr-3 text-sm font-bold">
+                <?= $_SESSION['flash']['type'] === 'success' ? '✅' : '❌' ?>
+                <?= $_SESSION['flash']['message'] ?>
+            </div>
+            
+            <button onclick="document.getElementById('toast').remove()" class="ml-auto text-white hover:text-gray-200">
+                &times;
+            </button>
+        </div>
+    </div>
+
+    <?php 
+        // TRÈS IMPORTANT : On supprime le message après l'affichage
+        unset($_SESSION['flash']); 
+    ?>
+
+    <script>
+        // Auto-suppression du message après 4 secondes
+        setTimeout(() => {
+            const toast = document.getElementById('toast');
+            if(toast) toast.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+            setTimeout(() => toast?.remove(), 500);
+        }, 4000);
+    </script>
+<?php endif; ?>
     <nav class="bg-white shadow-sm p-4 mb-8">
         <div class="max-w-2xl mx-auto flex justify-between items-center">
             <span class="font-bold text-gray-700">👤 <?= $_SESSION['user_email'] ?></span>
