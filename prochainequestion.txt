@@ -1,0 +1,5 @@
+Maintenant que Nous somme à cette phase on doit continuer si t'es pas trop facile: 3. Amélioration de l'UX (Notifications et Feedback)
+Dans une application pro, quand on supprime une note, on ne se contente pas d'une page qui se rafraîchit.
+
+Fonctionnalité : Ajouter des "Toasts" (petits messages de confirmation en haut à droite) comme "Note supprimée avec succès" ou "Bienvenue, [Nom]".
+Technique : Utiliser les variables de session flash pour passer un message d'une page à l'autre après une redirection.
