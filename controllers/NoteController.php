@@ -83,8 +83,19 @@ public function supprimerNote() {
     public function mettreAJour() {
         if (isset($_POST['id']) && !empty($_POST['titre'])) {
             $model = new Note();
-            // Optionnel : ajouter category_id ici si vous l'ajoutez dans le formulaire d'édition
-            $model->modifier($_POST['id'], $_POST['titre'], $_POST['contenu']);
+            $resultat = $model->modifier($_POST['id'], $_POST['titre'], $_POST['contenu']);
+            
+            if ($resultat) {
+                $_SESSION['flash'] = [
+                    'type' => 'success',
+                    'message' => 'Note mise à jour avec succès !'
+                ];
+            } else {
+                $_SESSION['flash'] = [
+                    'type' => 'error',
+                    'message' => 'Erreur lors de la mise à jour.'
+                ];
+            }
         }
         header('Location: index.php');
     }

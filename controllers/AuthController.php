@@ -11,14 +11,19 @@ class AuthController {
         $model = new User();
         $user = $model->connecter($_POST['email'], $_POST['password']);
         
-        if ($user) {
-            session_start();
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_email'] = $user['email'];
-            header('Location: index.php');
-        } else {
-            header('Location: index.php?action=login&erreur=1');
-        }
+        // Dans controllers/AuthController.php, méthode traiterLogin() :
+if ($user) {
+    session_start();
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['user_email'] = $user['email'];
+    
+    $_SESSION['flash'] = [
+        'type' => 'success',
+        'message' => 'Heureux de vous revoir, ' . explode('@', $user['email'])[0] . ' !'
+    ];
+    
+    header('Location: index.php');
+}
     }
     // Dans controllers/AuthController.php
 

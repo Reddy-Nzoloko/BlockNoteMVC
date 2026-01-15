@@ -52,10 +52,10 @@ public function creer($titre, $contenu, $userId, $categoryId) {
     }
 
     public function supprimer($id, $userId) {
-        // Sécurité : on vérifie l'user_id pour que personne ne supprime les notes des autres
-        $req = $this->db->prepare('DELETE FROM notes WHERE id = ? AND user_id = ?');
-        return $req->execute([$id, $userId]);
-    }
+    // On ajoute AND user_id = ? pour la sécurité
+    $req = $this->db->prepare('DELETE FROM notes WHERE id = ? AND user_id = ?');
+    return $req->execute([$id, $userId]);
+}
 
     public function lireUne($id) {
         $req = $this->db->prepare('SELECT * FROM notes WHERE id = ?');
@@ -64,7 +64,7 @@ public function creer($titre, $contenu, $userId, $categoryId) {
     }
 
     public function modifier($id, $titre, $contenu) {
-        $req = $this->db->prepare('UPDATE notes SET titre = ?, contenu = ? WHERE id = ?');
-        return $req->execute([$titre, $contenu, $id]);
-    }
+    $req = $this->db->prepare('UPDATE notes SET titre = ?, contenu = ? WHERE id = ?');
+    return $req->execute([$titre, $contenu, $id]);
+}
 }
