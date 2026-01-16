@@ -25,6 +25,9 @@ case 'register':
 case 'traiter_register':
     $auth->traiterRegister();
     break;
+case 'mettreAJour':
+    $controller->mettreAJour();
+    break;
     
     // Pour toutes les autres actions sur les notes
     default:
