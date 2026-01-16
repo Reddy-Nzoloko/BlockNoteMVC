@@ -51,7 +51,7 @@ public function creer($titre, $contenu, $userId, $categoryId) {
         return $req->execute([$id, $userId]);
     }
 
-    public function supprimer($id, $userId) {
+ public function supprimer($id, $userId) {
     // On ajoute AND user_id = ? pour la sécurité
     $req = $this->db->prepare('DELETE FROM notes WHERE id = ? AND user_id = ?');
     return $req->execute([$id, $userId]);
