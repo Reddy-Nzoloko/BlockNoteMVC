@@ -3,119 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Mes Notes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <title>Mes Notes Flash - Dark Edition</title>
+    <style>
+        /* Animation personnalisée pour l'entrée des notes */
+        .note-card {
+            transition: all 0.3s ease;
+        }
+        .note-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <?php if (isset($_SESSION['flash'])): ?>
-    <div id="toast" class="fixed top-5 right-5 z-50 animate-bounce">
-        <div class="flex items-center p-4 mb-4 text-white rounded-lg shadow-lg 
-            <?= $_SESSION['flash']['type'] === 'success' ? 'bg-green-500' : 'bg-red-500' ?>">
-            
-            <div class="mr-3 text-sm font-bold">
-                <?= $_SESSION['flash']['type'] === 'success' ? '✅' : '❌' ?>
-                <?= $_SESSION['flash']['message'] ?>
-            </div>
-            
-            <button onclick="document.getElementById('toast').remove()" class="ml-auto text-white hover:text-gray-200">
-                &times;
-            </button>
-        </div>
-    </div>
+<body class="bg-gray-900 text-gray-100 min-h-screen font-sans">
 
-    <?php 
-        // TRÈS IMPORTANT : On supprime le message après l'affichage
-        unset($_SESSION['flash']); 
-    ?>
-
-    <script>
-        // Auto-suppression du message après 4 secondes
-        setTimeout(() => {
-            const toast = document.getElementById('toast');
-            if(toast) toast.classList.add('opacity-0', 'transition-opacity', 'duration-500');
-            setTimeout(() => toast?.remove(), 500);
-        }, 4000);
-    </script>
-<?php endif; ?>
-    <nav class="bg-white shadow-sm p-4 mb-8">
-        <div class="max-w-2xl mx-auto flex justify-between items-center">
-            <span class="font-bold text-gray-700">👤 <?= $_SESSION['user_email'] ?></span>
-            <div class="flex space-x-4">
-                <a href="index.php?tri=<?= isset($_GET['tri']) && $_GET['tri'] == 'asc' ? 'desc' : 'asc' ?>" class="text-sm text-indigo-600 hover:underline">
-                    Trier par date (<?= isset($_GET['tri']) && $_GET['tri'] == 'asc' ? 'Ancien' : 'Récent' ?>)
+    <nav class="bg-gray-800 border-b border-gray-700 p-4 mb-8 shadow-xl">
+        <div class="max-w-3xl mx-auto flex justify-between items-center">
+            <span class="font-bold text-indigo-400">👤 <?= $_SESSION['user_email'] ?></span>
+            <div class="flex space-x-6 items-center">
+                <a href="index.php?tri=<?= isset($_GET['tri']) && $_GET['tri'] == 'asc' ? 'desc' : 'asc' ?>" class="text-sm text-gray-400 hover:text-indigo-400 transition">
+                    📅 <?= isset($_GET['tri']) && $_GET['tri'] == 'asc' ? 'Ancien' : 'Récent' ?>
                 </a>
-                <a href="index.php?action=logout" class="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200 text-sm font-bold">Déconnexion</a>
+                <a href="index.php?action=logout" class="bg-red-900/30 text-red-400 border border-red-800 px-3 py-1 rounded hover:bg-red-800 hover:text-white transition text-sm font-bold">
+                    Déconnexion
+                </a>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-2xl mx-auto p-4">
-        <h1 class="text-3xl font-bold text-indigo-600 mb-6 text-center">📝 Mes Notes Flash</h1>
+    <div class="max-w-3xl mx-auto p-4 animate__animated animate__fadeIn">
+        <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 mb-8 text-center uppercase tracking-widest">
+            Mes Notes Flash
+        </h1>
 
-        <form action="index.php?action=ajouter" method="POST" class="bg-white p-6 rounded-lg shadow-md mb-8 border-t-4 border-indigo-500">
-            <div class="mb-4">
-                <input type="text" name="titre" placeholder="Titre de la tâche..." required class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500 outline-none">
-            </div>
-            
-            <div class="mb-4">
-                <select name="category_id" required class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-                    <option value="">-- Choisir une catégorie --</option>
+        <form action="index.php?action=ajouter" method="POST" class="bg-gray-800 p-6 rounded-xl shadow-2xl mb-10 border border-gray-700 animate__animated animate__slideInDown">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <input type="text" name="titre" placeholder="Titre captivant..." required 
+                       class="bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                
+                <select name="category_id" required class="bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <option value="">📁 Choisir une catégorie</option>
                     <?php foreach ($categories as $cat): ?>
                         <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nom']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
-
-            <div class="mb-4">
-                <textarea name="contenu" placeholder="Détails..." required class="w-full p-2 border rounded h-20 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-            </div>
             
-            <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2 rounded hover:bg-indigo-700 transition">
-                Enregistrer la note
+            <textarea name="contenu" placeholder="Décrivez votre idée..." required 
+                      class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-white h-24 mb-4 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+            
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg">
+                ✨ Enregistrer la note
             </button>
         </form>
 
-        <div class="mb-6">
+        <div class="mb-8">
             <form action="index.php" method="GET" class="flex gap-2">
                 <input type="hidden" name="action" value="index">
-                <div class="relative flex-grow">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">🔍</span>
-                    <input type="text" name="q" value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>" 
-                           placeholder="Rechercher une note..." 
-                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm">
-                </div>
-                <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">Filtrer</button>
-                <?php if(!empty($_GET['q'])): ?>
-                    <a href="index.php" class="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 text-center">Effacer</a>
-                <?php endif; ?>
+                <input type="text" name="q" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" 
+                       placeholder="Rechercher dans le vide sidéral..." 
+                       class="flex-grow bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-indigo-500 outline-none">
+                <button type="submit" class="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg transition">🔍</button>
             </form>
         </div>
 
-        <div class="grid gap-4">
+        <div class="grid gap-6">
             <?php foreach ($notes as $note): ?>
-                <div class="bg-white p-5 rounded-lg shadow-md border-l-4 <?= $note['statut'] ? 'border-green-500 opacity-75' : 'border-indigo-500' ?> flex justify-between items-start">
-                    <div class="flex items-start space-x-3 w-full">
-                        <a href="index.php?action=toggle&id=<?= $note['id'] ?>" class="mt-1 text-2xl">
-                            <?= $note['statut'] ? '✅' : '⬜' ?>
-                        </a>
-                        
-                        <div class="flex-grow">
-                            <?php if (!empty($note['cat_nom'])): ?>
-                                <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase mb-2 <?= $note['cat_couleur'] ?>">
+                <div class="note-card bg-gray-800 p-6 rounded-xl border-l-4 <?= $note['statut'] ? 'border-green-600' : 'border-indigo-600' ?> border-t border-r border-b border-gray-700 flex justify-between items-start animate__animated animate__fadeInUp">
+                    <div class="flex-grow">
+                        <div class="flex items-center space-x-3 mb-2">
+                             <a href="index.php?action=toggle&id=<?= $note['id'] ?>" class="text-2xl hover:scale-125 transition">
+                                <?= $note['statut'] ? '🟣' : '⚫' ?>
+                            </a>
+                            <?php if ($note['cat_nom']): ?>
+                                <span class="text-[10px] font-bold uppercase px-2 py-1 rounded bg-indigo-900/50 text-indigo-300 border border-indigo-800">
                                     <?= htmlspecialchars($note['cat_nom']) ?>
                                 </span>
                             <?php endif; ?>
-
-                            <h2 class="font-bold text-xl <?= $note['statut'] ? 'line-through text-gray-400' : '' ?>">
-                                <?= htmlspecialchars($note['titre']) ?>
-                            </h2>
-                            <p class="text-gray-600 mt-1"><?= nl2br(htmlspecialchars($note['contenu'])) ?></p>
-                            <span class="text-xs text-gray-400 mt-2 block italic"><?= $note['date_creation'] ?></span>
+                        </div>
+                        <h2 class="text-xl font-bold <?= $note['statut'] ? 'line-through text-gray-500' : 'text-white' ?>">
+                            <?= htmlspecialchars($note['titre']) ?>
+                        </h2>
+                        <p class="text-gray-400 mt-2 line-clamp-3"><?= nl2br(htmlspecialchars($note['contenu'])) ?></p>
+                        <div class="text-[10px] text-gray-600 mt-4 flex items-center">
+                            <span class="mr-2">🕒</span> <?= $note['date_creation'] ?>
                         </div>
                     </div>
                     
-                    <div class="flex space-x-3 text-lg ml-4">
-                        <a href="index.php?action=editer&id=<?= $note['id'] ?>" class="hover:scale-110 transition">✏️</a>
-                        <a href="index.php?action=supprimer&id=<?= $note['id'] ?>" onclick="return confirm('Supprimer ?')" class="hover:scale-110 transition">🗑️</a>
+                    <div class="flex flex-col space-y-4 ml-4">
+                        <a href="index.php?action=editer&id=<?= $note['id'] ?>" class="text-gray-500 hover:text-indigo-400 transition text-xl">✏️</a>
+                        <a href="index.php?action=supprimer&id=<?= $note['id'] ?>" onclick="return confirm('Supprimer définitivement ?')" class="text-gray-500 hover:text-red-400 transition text-xl">🗑️</a>
                     </div>
                 </div>
             <?php endforeach; ?>
