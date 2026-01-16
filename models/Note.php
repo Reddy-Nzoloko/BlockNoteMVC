@@ -58,10 +58,10 @@ public function creer($titre, $contenu, $userId, $categoryId) {
 }
 
     public function lireUne($id) {
-        $req = $this->db->prepare('SELECT * FROM notes WHERE id = ?');
-        $req->execute([$id]);
-        return $req->fetch(PDO::FETCH_ASSOC);
-    }
+    $req = $this->db->prepare('SELECT * FROM notes WHERE id = ?');
+    $req->execute([$id]);
+    return $req->fetch(PDO::FETCH_ASSOC); // Retourne un tableau associatif
+}
 
     public function modifier($id, $titre, $contenu) {
     $req = $this->db->prepare('UPDATE notes SET titre = ?, contenu = ? WHERE id = ?');

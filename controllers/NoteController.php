@@ -65,20 +65,25 @@ public function supprimerNote() {
 
 
     public function editerNote() {
-        if (isset($_GET['id'])) {
-            $modelNote = new Note();
-            $modelCat = new Category();
-            
-            $note = $modelNote->lireUne($_GET['id']);
-            $categories = $modelCat->tout(); // Utile si on veut changer la catégorie en éditant
-            
-            if (!$note || $note['user_id'] != $_SESSION['user_id']) {
-                header('Location: index.php');
-                exit();
-            }
-            require __DIR__ . '/../views/editer.php';
+    if (isset($_GET['id'])) {
+        $modelNote = new Note();
+        $modelCat = new Category();
+        
+        // 1. On récupère les données de la note précise
+        $note = $modelNote->lireUne($_GET['id']);
+        // 2. On récupère les catégories pour la liste déroulante
+        $categories = $modelCat->tout(); 
+        
+        // 3. Vérification de sécurité
+        if (!$note || $note['user_id'] != $_SESSION['user_id']) {
+            header('Location: index.php');
+            exit();
         }
+
+        // 4. ON APPELLE LA VUE (la variable $note sera disponible dedans)
+        require __DIR__ . '/../views/editer.php';
     }
+}
 
     public function mettreAJour() {
         if (isset($_POST['id']) && !empty($_POST['titre'])) {

@@ -7,32 +7,52 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'index';
 $auth = new AuthController();
 
 switch($action) {
-    case 'login': $auth->afficherLogin(); break;
-    case 'traiter_login': $auth->traiterLogin(); break;
-    case 'logout': $auth->logout(); break;
-    // Dans index.php, ajoutez ces cases au switch ($action) :
-case 'logout':
-        $auth->logout();
+    // --- AUTHENTIFICATION ---
+    case 'login': 
+        $auth->afficherLogin(); 
         break;
+    case 'traiter_login': 
+        $auth->traiterLogin(); 
+        break;
+    case 'logout': 
+        $auth->logout(); 
+        break;
+    case 'register':
+        $auth->afficherRegister();
+        break;
+    case 'traiter_register':
+        $auth->traiterRegister();
+        break;
+
+    // --- GESTION DES NOTES ---
     case 'toggle':
-        $noteCtrl = new NoteController();
+        $noteCtrl = new NoteController(); // On crée l'objet
         $noteCtrl->changerStatut();
         break;
-case 'register':
-    $auth->afficherRegister();
-    break;
 
-case 'traiter_register':
-    $auth->traiterRegister();
-    break;
-case 'mettreAJour':
-    $controller->mettreAJour();
-    break;
+    case 'editer':
+        $noteCtrl = new NoteController(); // On crée l'objet
+        $noteCtrl->editerNote();
+        break;
+
+    case 'mettreAJour':
+        $noteCtrl = new NoteController(); // On utilise le bon nom de variable
+        $noteCtrl->mettreAJour();
+        break;
     
-    // Pour toutes les autres actions sur les notes
+    case 'ajouter':
+        $noteCtrl = new NoteController();
+        $noteCtrl->sauvegarder();
+        break;
+
+    case 'supprimer':
+        $noteCtrl = new NoteController();
+        $noteCtrl->supprimerNote();
+        break;
+
+    // --- ACCUEIL ---
     default:
         $noteCtrl = new NoteController();
-        if ($action == 'ajouter') $noteCtrl->sauvegarder();
-        else $noteCtrl->afficherAccueil();
+        $noteCtrl->afficherAccueil();
         break;
 }
