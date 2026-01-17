@@ -49,3 +49,6 @@ CREATE TABLE password_resets (
     token VARCHAR(255) NOT NULL,
     expire_at DATETIME NOT NULL
 );
+
+-- ajout d'une table de notification pour que l'application notifis la personne 
+ALTER TABLE notes ADD COLUMN date_rappel DATETIME NULL;

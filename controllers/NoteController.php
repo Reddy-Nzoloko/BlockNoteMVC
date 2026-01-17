@@ -32,18 +32,22 @@ class NoteController {
         require __DIR__ . '/../views/liste.php';
     }
 
-    // VERSION UNIQUE : Enregistre avec l'ID de catégorie
+    // VERSION UNIQUE : Enregistre avec l'ID de catégorie et maintenant time qui est optionnel 
    public function sauvegarder() {
-    if (!empty($_POST['titre']) && !empty($_POST['category_id'])) {
+    if (!empty($_POST['titre'])) {
         $model = new Note();
-        $model->creer($_POST['titre'], $_POST['contenu'], $_SESSION['user_id'], $_POST['category_id']);
+        // On récupère la date de rappel si elle est remplie
+        $date_rappel = !empty($_POST['date_rappel']) ? $_POST['date_rappel'] : null;
         
-        $_SESSION['flash'] = [
-            'type' => 'success',
-            'message' => 'Nouvelle note enregistrée !'
-        ];
+        $model->creer(
+            $_POST['titre'], 
+            $_POST['contenu'], 
+            $_SESSION['user_id'], 
+            $_POST['category_id'], 
+            $date_rappel // On passe la date au modèle
+        );
+        // ... (votre message flash et redirection)
     }
-    header('Location: index.php');
 }
 
     // Exemple pour la suppression

@@ -48,6 +48,11 @@
                         <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nom']) ?></option>
                     <?php endforeach; ?>
                 </select>
+                <div class="mb-4">
+    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">🔔 Programmer un rappel (Optionnel)</label>
+    <input type="datetime-local" name="date_rappel" 
+           class="w-full bg-gray-900/50 border border-gray-700 rounded-xl p-3 text-white outline-none focus:ring-2 ring-indigo-500 transition-all">
+</div>
             </div>
             
             <textarea name="contenu" placeholder="Décrivez votre idée..." required 
