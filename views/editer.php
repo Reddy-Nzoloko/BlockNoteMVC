@@ -38,6 +38,30 @@
                        class="w-full p-4 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 ring-indigo-500 outline-none transition-all" 
                        required>
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 ml-1">
+            Catégorie
+        </label>
+        <select name="category_id" 
+                class="w-full p-4 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 ring-indigo-500 outline-none transition-all">
+            <?php foreach ($categories as $cat): ?>
+                <option value="<?= $cat['id'] ?>" <?= $note['category_id'] == $cat['id'] ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($cat['nom']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
+    <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 ml-1">
+            🔔 Modifier le Rappel
+        </label>
+        <input type="datetime-local" name="date_rappel" 
+               value="<?= $note['date_rappel'] ? date('Y-m-d\TH:i', strtotime($note['date_rappel'])) : '' ?>"
+               class="w-full p-4 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 ring-indigo-500 outline-none transition-all">
+    </div>
+</div>
 
             <div class="mb-8">
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 ml-1">

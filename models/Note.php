@@ -71,8 +71,11 @@ public function creer($titre, $contenu, $userId, $categoryId, $dateRappel) {
     return $req->fetch(PDO::FETCH_ASSOC); // Retourne un tableau associatif
 }
 
-    public function modifier($id, $titre, $contenu) {
-    $req = $this->db->prepare('UPDATE notes SET titre = ?, contenu = ? WHERE id = ?');
-    return $req->execute([$titre, $contenu, $id]);
+    public function modifier($id, $titre, $contenu, $categoryId, $dateRappel) {
+    $sql = 'UPDATE notes 
+            SET titre = ?, contenu = ?, category_id = ?, date_rappel = ? 
+            WHERE id = ?';
+    $req = $this->db->prepare($sql);
+    return $req->execute([$titre, $contenu, $categoryId, $dateRappel, $id]);
 }
 }

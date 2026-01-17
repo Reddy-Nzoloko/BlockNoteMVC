@@ -95,24 +95,26 @@ public function supprimerNote() {
 }
 
     public function mettreAJour() {
-        if (isset($_POST['id']) && !empty($_POST['titre'])) {
-            $model = new Note();
-            $resultat = $model->modifier($_POST['id'], $_POST['titre'], $_POST['contenu']);
-            
-            if ($resultat) {
-                $_SESSION['flash'] = [
-                    'type' => 'success',
-                    'message' => 'Note mise à jour avec succès !'
-                ];
-            } else {
-                $_SESSION['flash'] = [
-                    'type' => 'error',
-                    'message' => 'Erreur lors de la mise à jour.'
-                ];
-            }
+    if (isset($_POST['id']) && !empty($_POST['titre'])) {
+        $model = new Note();
+        
+        $id = $_POST['id'];
+        $titre = $_POST['titre'];
+        $contenu = $_POST['contenu'];
+        $category_id = $_POST['category_id'];
+        // Si la date est vide, on envoie null
+        $date_rappel = !empty($_POST['date_rappel']) ? $_POST['date_rappel'] : null;
+
+        // On passe TOUT au modèle
+        $resultat = $model->modifier($id, $titre, $contenu, $category_id, $date_rappel);
+        
+        if ($resultat) {
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Note mise à jour !'];
         }
-        header('Location: index.php');
     }
+    header('Location: index.php');
+    exit();
+}
 
     public function changerStatut() {
         if (isset($_GET['id'])) {
