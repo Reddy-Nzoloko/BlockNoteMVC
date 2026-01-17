@@ -48,6 +48,9 @@
                            class="w-full bg-gray-900/50 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder:text-gray-600" 
                            required>
                 </div>
+                <!-- <div class="text-right mb-4">
+    <a href="index.php?action=forgot_password" class="text-xs text-indigo-400 hover:underline">Mot de passe oublié ?</a>
+</div> -->
 
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all duration-300 shadow-lg shadow-indigo-500/20 active:scale-95 transform">
                     Se connecter
@@ -65,7 +68,7 @@
         </div>
         
         <p class="text-center text-gray-600 text-[10px] mt-8 uppercase tracking-[0.2em]">
-            &copy; 2026 NoteFlash System - Sécurisé par SSL
+            &copy; 2026 NoteFlash System - RedDev Version 001
         </p>
     </div>
 
