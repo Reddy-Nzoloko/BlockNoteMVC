@@ -31,6 +31,7 @@ public function afficherRegister() {
     require __DIR__ . '/../views/register.php';
 }
 
+
 public function traiterRegister() {
     if (!empty($_POST['email']) && !empty($_POST['password'])) {
         $model = new User();
@@ -45,6 +46,26 @@ public function traiterRegister() {
             header('Location: index.php?action=register&erreur=1');
         }
     }
+}
+// Fonction de Recuperation des mots de pass
+public function traiterRecuperation() {
+    if (!empty($_POST['email'])) {
+        $email = $_POST['email'];
+        // 1. Vérifier si l'user existe (à faire dans le Model)
+        // 2. Générer un token
+        $token = bin2hex(random_bytes(32)); 
+        
+        // 3. Sauvegarder en base de données avec une expiration (+15 min)
+        // (Simulé ici)
+        
+        // 4. "Envoyer" l'email
+        // Pour vos tests, on va juste afficher un message de succès
+        $_SESSION['flash'] = [
+            'type' => 'success',
+            'message' => 'Si cet email existe, un lien a été envoyé !'
+        ];
+    }
+    header('Location: index.php?action=login');
 }
 
     public function logout() {

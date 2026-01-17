@@ -41,3 +41,11 @@ INSERT INTO categories (nom, couleur) VALUES
 
 -- 3. Ajout de la colonne category_id dans la table notes
 ALTER TABLE notes ADD COLUMN category_id INT;
+
+-- fonctionnalité de la recuperation des mots de pass 
+CREATE TABLE password_resets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    expire_at DATETIME NOT NULL
+);
