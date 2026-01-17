@@ -104,5 +104,40 @@
             <?php endforeach; ?>
         </div>
     </div>
+    <script>
+// 1. Demander la permission dès le chargement
+if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+}
+
+// 2. Fonction pour vérifier les rappels
+function verifierRappels() {
+    // On récupère les notes qui ont un rappel via PHP (injecté en JSON)
+    const notesAvecRappel = <?= json_encode($notes) ?>;
+    const maintenant = new Date();
+
+    notesAvecRappel.forEach(note => {
+        if (note.date_rappel && !note.statut) { // Si rappel présent et tâche non faite
+            const tempsRappel = new Date(note.date_rappel);
+            
+            // Si l'heure est arrivée (à la minute près)
+            if (Math.floor(maintenant.getTime() / 60000) === Math.floor(tempsRappel.getTime() / 60000)) {
+                
+                if (Notification.permission === "granted") {
+                    new Notification("⏰ Rappel NoteFlash !", {
+                        body: `Il est temps de : ${note.titre}`,
+                        icon: "https://cdn-icons-png.flaticon.com/512/1792/1792931.png"
+                    });
+                } else {
+                    alert("RAPPEL : " + note.titre);
+                }
+            }
+        }
+    });
+}
+
+// 3. Vérifier toutes les 30 secondes
+setInterval(verifierRappels, 30000);
+</script>
 </body>
 </html>

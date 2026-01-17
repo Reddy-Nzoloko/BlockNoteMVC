@@ -33,10 +33,18 @@ class Note {
     return $req->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Mettre à jour aussi la méthode creer() pour inclure category_id
-public function creer($titre, $contenu, $userId, $categoryId) {
-    $req = $this->db->prepare('INSERT INTO notes (titre, contenu, user_id, category_id) VALUES (?, ?, ?, ?)');
-    return $req->execute([$titre, $contenu, $userId, $categoryId]);
+// Mettre à jour aussi la méthode creer() pour inclure category_id et maintenant heure aussi
+public function creer($titre, $contenu, $userId, $categoryId, $dateRappel) {
+    // Notez qu'on a ajouté date_rappel dans la requête SQL
+    $req = $this->db->prepare('INSERT INTO notes (titre, contenu, user_id, category_id, date_rappel, date_creation) VALUES (?, ?, ?, ?, ?, NOW())');
+    
+    return $req->execute([
+        $titre, 
+        $contenu, 
+        $userId, 
+        $categoryId, 
+        $dateRappel
+    ]);
 }
 
     // On ajoute l'user_id lors de la création pour lier la note à l'utilisateur

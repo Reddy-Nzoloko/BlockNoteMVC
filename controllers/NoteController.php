@@ -34,21 +34,30 @@ class NoteController {
 
     // VERSION UNIQUE : Enregistre avec l'ID de catégorie et maintenant time qui est optionnel 
    public function sauvegarder() {
-    if (!empty($_POST['titre'])) {
-        $model = new Note();
-        // On récupère la date de rappel si elle est remplie
-        $date_rappel = !empty($_POST['date_rappel']) ? $_POST['date_rappel'] : null;
+        if (!empty($_POST['titre'])) {
+            $model = new Note();
+            
+            // On récupère les données
+            $titre = $_POST['titre'];
+            $contenu = $_POST['contenu'] ?? '';
+            $user_id = $_SESSION['user_id'];
+            $category_id = $_POST['category_id'] ?? null;
+            $date_rappel = !empty($_POST['date_rappel']) ? $_POST['date_rappel'] : null;
+            
+            // Appel au modèle
+            $model->creer($titre, $contenu, $user_id, $category_id, $date_rappel);
+            
+            // MESSAGE FLASH (Pour le côté Pro)
+            $_SESSION['flash'] = [
+                'type' => 'success',
+                'message' => '✨ Note enregistrée avec succès !'
+            ];
+        }
         
-        $model->creer(
-            $_POST['titre'], 
-            $_POST['contenu'], 
-            $_SESSION['user_id'], 
-            $_POST['category_id'], 
-            $date_rappel // On passe la date au modèle
-        );
-        // ... (votre message flash et redirection)
+        // REDIRECTION : Crucial pour éviter la page blanche
+        header('Location: index.php');
+        exit(); 
     }
-}
 
     // Exemple pour la suppression
 public function supprimerNote() {
@@ -64,10 +73,6 @@ public function supprimerNote() {
     }
     header('Location: index.php');
 }
-
-// Exemple pour la sauvegarde
-
-
     public function editerNote() {
     if (isset($_GET['id'])) {
         $modelNote = new Note();
