@@ -2,4 +2,66 @@ Maintenant que Nous somme à cette phase on doit continuer si t'es pas trop faci
 Dans une application pro, quand on supprime une note, on ne se contente pas d'une page qui se rafraîchit.
 
 Fonctionnalité : Ajouter des "Toasts" (petits messages de confirmation en haut à droite) comme "Note supprimée avec succès" ou "Bienvenue, [Nom]".
-Technique : Utiliser les variables de session flash pour passer un message d'une page à l'autre après une redirection.
+Technique : Utiliser les variables de session flash pour passer un message d'une page à l'autre après une redirection.ù
+
+
+
+
+<?php
+require_once 'controllers/NoteController.php';
+require_once 'controllers/AuthController.php';
+
+$action = isset($_GET['action']) ? $_GET['action'] : 'index';
+
+$auth = new AuthController();
+
+switch($action) {
+    // --- AUTHENTIFICATION ---
+    case 'login': 
+        $auth->afficherLogin(); 
+        break;
+    case 'traiter_login': 
+        $auth->traiterLogin(); 
+        break;
+    case 'logout': 
+        $auth->logout(); 
+        break;
+    case 'register':
+        $auth->afficherRegister();
+        break;
+    case 'traiter_register':
+        $auth->traiterRegister();
+        break;
+
+    // --- GESTION DES NOTES ---
+    case 'toggle':
+        $noteCtrl = new NoteController(); // On crée l'objet
+        $noteCtrl->changerStatut();
+        break;
+
+    case 'editer':
+        $noteCtrl = new NoteController(); // On crée l'objet
+        $noteCtrl->editerNote();
+        break;
+
+    case 'mettreAJour':
+        $noteCtrl = new NoteController(); // On utilise le bon nom de variable
+        $noteCtrl->mettreAJour();
+        break;
+    
+    case 'ajouter':
+        $noteCtrl = new NoteController();
+        $noteCtrl->sauvegarder();
+        break;
+
+    case 'supprimer':
+        $noteCtrl = new NoteController();
+        $noteCtrl->supprimerNote();
+        break;
+
+    // --- ACCUEIL ---
+    default:
+        $noteCtrl = new NoteController();
+        $noteCtrl->afficherAccueil();
+        break;
+}

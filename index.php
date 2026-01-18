@@ -1,58 +1,48 @@
 <?php
+// index.php
+session_start();
+
+// On récupère l'action, par défaut c'est 'home' maintenant
+$action = isset($_GET['action']) ? $_GET['action'] : 'home';
+
+// Import des contrôleurs
 require_once 'controllers/NoteController.php';
 require_once 'controllers/AuthController.php';
 
-$action = isset($_GET['action']) ? $_GET['action'] : 'index';
+$noteCtrl = new NoteController();
+$authCtrl = new AuthController();
 
-$auth = new AuthController();
+switch ($action) {
+    case 'home':
+        // Si l'utilisateur est déjà connecté, on peut le rediriger vers ses notes
+        // Sinon, on montre la page de présentation
+        if (isset($_SESSION['user_id'])) {
+            $noteCtrl->afficherAccueil();
+        } else {
+            require 'views/home.php';
+        }
+        break;
 
-switch($action) {
-    // --- AUTHENTIFICATION ---
-    case 'login': 
-        $auth->afficherLogin(); 
+    case 'login':
+        require 'views/login.php';
         break;
-    case 'traiter_login': 
-        $auth->traiterLogin(); 
-        break;
-    case 'logout': 
-        $auth->logout(); 
-        break;
+
     case 'register':
-        $auth->afficherRegister();
-        break;
-    case 'traiter_register':
-        $auth->traiterRegister();
+        require 'views/register.php';
         break;
 
-    // --- GESTION DES NOTES ---
-    case 'toggle':
-        $noteCtrl = new NoteController(); // On crée l'objet
-        $noteCtrl->changerStatut();
+    case 'index':
+        // C'est ici qu'on affiche la liste des notes après connexion
+        $noteCtrl->afficherAccueil();
         break;
 
-    case 'editer':
-        $noteCtrl = new NoteController(); // On crée l'objet
-        $noteCtrl->editerNote();
-        break;
-
-    case 'mettreAJour':
-        $noteCtrl = new NoteController(); // On utilise le bon nom de variable
-        $noteCtrl->mettreAJour();
-        break;
-    
     case 'ajouter':
-        $noteCtrl = new NoteController();
         $noteCtrl->sauvegarder();
         break;
 
-    case 'supprimer':
-        $noteCtrl = new NoteController();
-        $noteCtrl->supprimerNote();
-        break;
+    // ... gardez vos autres cases (supprimer, editer, etc.) ...
 
-    // --- ACCUEIL ---
     default:
-        $noteCtrl = new NoteController();
-        $noteCtrl->afficherAccueil();
+        require 'views/home.php';
         break;
 }
