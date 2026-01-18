@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <title>Connexion | NoteFlash Pro</title>
+    <title>MindFlow </title>
 </head>
 <body class="bg-gray-900 text-gray-100 h-screen flex items-center justify-center overflow-hidden">
 
@@ -20,7 +20,7 @@
                 <span class="text-3xl">📝</span>
             </div>
             <h1 class="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-                NoteFlash Pro
+                Note MindFlow 
             </h1>
             <p class="text-gray-400 mt-2">Gérez vos idées en toute sécurité.</p>
         </div>
@@ -68,7 +68,7 @@
         </div>
         
         <p class="text-center text-gray-600 text-[10px] mt-8 uppercase tracking-[0.2em]">
-            &copy; 2026 NoteFlash System - RedDev Version 001
+            &copy; 2026 NoteMindFlow System - RedDev Version 001
         </p>
     </div>
 
