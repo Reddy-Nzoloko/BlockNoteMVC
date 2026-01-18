@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Réinitialisation | NoteFlash Pro</title>
+    <title>MindFlow</title>
 </head>
 <body class="bg-gray-900 text-gray-100 h-screen flex items-center justify-center">
     <div class="relative z-10 w-full max-w-md px-6">
