@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" href="logo.png" type="image/x-icon">
-    <title>MindFlow</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <title>Modifier | MindFlow</title>
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
@@ -18,17 +18,18 @@
                 <h1 class="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
                     Modifier la note
                 </h1>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Mettez à jour vos idées en un clic.</p>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Mettez à jour vos idées et vos visuels.</p>
             </div>
             <a href="index.php" class="text-indigo-600 dark:text-indigo-400 hover:scale-105 transition-transform">
                 <span class="text-2xl">✕</span>
             </a>
         </div>
 
-        <form action="index.php?action=mettreAJour" method="POST" 
+        <form action="index.php?action=mettreAJour" method="POST" enctype="multipart/form-data"
               class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700">
             
             <input type="hidden" name="id" value="<?= $note['id'] ?>">
+            <input type="hidden" name="ancienne_image" value="<?= $note['image_path'] ?>">
             
             <div class="mb-6">
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 ml-1">
@@ -39,30 +40,44 @@
                        class="w-full p-4 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 ring-indigo-500 outline-none transition-all" 
                        required>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-    <div>
-        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 ml-1">
-            Catégorie
-        </label>
-        <select name="category_id" 
-                class="w-full p-4 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 ring-indigo-500 outline-none transition-all">
-            <?php foreach ($categories as $cat): ?>
-                <option value="<?= $cat['id'] ?>" <?= $note['category_id'] == $cat['id'] ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($cat['nom']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
 
-    <div>
-        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 ml-1">
-            🔔 Modifier le Rappel
-        </label>
-        <input type="datetime-local" name="date_rappel" 
-               value="<?= $note['date_rappel'] ? date('Y-m-d\TH:i', strtotime($note['date_rappel'])) : '' ?>"
-               class="w-full p-4 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 ring-indigo-500 outline-none transition-all">
-    </div>
-</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 ml-1">
+                        Catégorie
+                    </label>
+                    <select name="category_id" 
+                            class="w-full p-4 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 ring-indigo-500 outline-none transition-all">
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?= $cat['id'] ?>" <?= $note['category_id'] == $cat['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($cat['nom']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 ml-1">
+                        🔔 Modifier le Rappel
+                    </label>
+                    <input type="datetime-local" name="date_rappel" 
+                           value="<?= $note['date_rappel'] ? date('Y-m-d\TH:i', strtotime($note['date_rappel'])) : '' ?>"
+                           class="w-full p-4 bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 ring-indigo-500 outline-none transition-all">
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 ml-1">
+                    📸 Image d'illustration
+                </label>
+                <div class="flex items-center space-x-4">
+                    <?php if (!empty($note['image_path'])): ?>
+                        <img src="<?= $note['image_path'] ?>" class="w-16 h-16 rounded-lg object-cover border border-gray-600" alt="Miniature">
+                    <?php endif; ?>
+                    <input type="file" name="image" accept="image/*"
+                           class="flex-grow text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-gray-700 dark:file:text-indigo-300">
+                </div>
+            </div>
 
             <div class="mb-8">
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 ml-1">
