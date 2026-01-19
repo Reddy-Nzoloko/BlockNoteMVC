@@ -3,86 +3,101 @@
 require_once __DIR__ . '/../models/User.php';
 
 class AuthController {
+
+    public function __construct() {
+        // On s'assure que la session est démarrée pour les messages flash
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
+    // Cette méthode correspond à l'action 'login' du switch (affichage)
     public function afficherLogin() {
         require __DIR__ . '/../views/login.php';
     }
 
-    public function traiterLogin() {
-        $model = new User();
-        $user = $model->connecter($_POST['email'], $_POST['password']);
-        
-        // Dans controllers/AuthController.php, méthode traiterLogin() :
-if ($user) {
-    session_start();
-    $_SESSION['user_id'] = $user['id'];
-    $_SESSION['user_email'] = $user['email'];
-    
-    $_SESSION['flash'] = [
-        'type' => 'success',
-        'message' => 'Heureux de vous revoir, ' . explode('@', $user['email'])[0] . ' !'
-    ];
-    
-    header('Location: index.php');
-}
-    }
-    // Dans controllers/AuthController.php
+    // Cette méthode correspond à 'traiter_login' dans ton index.php
+    public function login() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'] ?? '';
+            $password = $_POST['password'] ?? '';
 
-public function afficherRegister() {
-    require __DIR__ . '/../views/register.php';
-}
-
-
-public function traiterRegister() {
-    if (!empty($_POST['email']) && !empty($_POST['password'])) {
-        $model = new User();
-        // On appelle la méthode inscrire du modèle
-        $success = $model->inscrire($_POST['email'], $_POST['password']);
-        
-        if ($success) {
-            // Inscription réussie -> vers le login avec un petit message de succès
-            header('Location: index.php?action=login&success=1');
-        } else {
-            // Erreur (email déjà pris ?)
-            header('Location: index.php?action=register&erreur=1');
+            $model = new User();
+            // On suppose que ta méthode connecter() vérifie l'email ET le mot de passe
+            $user = $model->connecter($email, $password);
+            
+            if ($user) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_email'] = $user['email'];
+                
+                $_SESSION['flash'] = [
+                    'type' => 'success',
+                    'message' => 'Heureux de vous revoir, ' . explode('@', $user['email'])[0] . ' !'
+                ];
+                
+                header('Location: index.php?action=index');
+                exit();
+            } else {
+                $_SESSION['flash'] = [
+                    'type' => 'error',
+                    'message' => 'Identifiants incorrects.'
+                ];
+                header('Location: index.php?action=login');
+                exit();
+            }
         }
     }
-}
-// Fonction de Recuperation des mots de pass
-public function traiterRecuperation() {
-    if (!empty($_POST['email'])) {
-        $email = $_POST['email'];
-        // 1. Vérifier si l'user existe (à faire dans le Model)
-        // 2. Générer un token
-        $token = bin2hex(random_bytes(32)); 
-        
-        // 3. Sauvegarder en base de données avec une expiration (+15 min)
-        // (Simulé ici)
-        
-        // 4. "Envoyer" l'email
-        // Pour vos tests, on va juste afficher un message de succès
-        $_SESSION['flash'] = [
-            'type' => 'success',
-            'message' => 'Si cet email existe, un lien a été envoyé !'
-        ];
+
+    public function afficherRegister() {
+        require __DIR__ . '/../views/register.php';
     }
-    header('Location: index.php?action=login');
-}
-// Suppression du compte utilisateur 
-public function supprimerCompte() {
-    if (isset($_SESSION['user_id'])) {
-        $model = new User();
-        $model->supprimer($_SESSION['user_id']);
-        
-        // On détruit la session après suppression
+
+    // Cette méthode correspond à 'traiter_register'
+    public function register() {
+        if (!empty($_POST['email']) && !empty($_POST['password'])) {
+            $model = new User();
+            $success = $model->inscrire($_POST['email'], $_POST['password']);
+            
+            if ($success) {
+                $_SESSION['flash'] = [
+                    'type' => 'success',
+                    'message' => 'Compte créé avec succès ! Connectez-vous.'
+                ];
+                header('Location: index.php?action=login');
+                exit();
+            } else {
+                header('Location: index.php?action=register&erreur=1');
+                exit();
+            }
+        }
+    }
+
+    public function logout() {
         session_destroy();
         header('Location: index.php?action=home');
         exit();
     }
-}
 
-    public function logout() {
-        session_start();
-        session_destroy();
+    public function supprimerCompte() {
+        if (isset($_SESSION['user_id'])) {
+            $model = new User();
+            $model->supprimer($_SESSION['user_id']);
+            
+            session_destroy();
+            header('Location: index.php?action=home');
+            exit();
+        }
+    }
+
+    public function traiterRecuperation() {
+        if (!empty($_POST['email'])) {
+            // Logique de simulation de mail
+            $_SESSION['flash'] = [
+                'type' => 'success',
+                'message' => 'Si cet email existe, un lien a été envoyé !'
+            ];
+        }
         header('Location: index.php?action=login');
+        exit();
     }
 }

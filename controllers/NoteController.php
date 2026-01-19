@@ -1,4 +1,5 @@
 <?php
+// controllers/NoteController.php
 require_once __DIR__ . '/../models/Note.php';
 require_once __DIR__ . '/../models/Category.php';
 
@@ -10,6 +11,7 @@ class NoteController {
         }
     }
 
+    // Sécurité : Vérifier si l'utilisateur est connecté
     private function verifierConnexion() {
         if (!isset($_SESSION['user_id'])) {
             header('Location: index.php?action=home');
@@ -19,23 +21,32 @@ class NoteController {
 
     public function afficherAccueil() {
         $this->verifierConnexion();
-        $ordre = ($_GET['tri'] ?? 'DESC') === 'asc' ? 'ASC' : 'DESC';
+        $ordre = (isset($_GET['tri']) && $_GET['tri'] == 'asc') ? 'ASC' : 'DESC';
         $recherche = $_GET['q'] ?? '';
 
         $modelNote = new Note();
+        $modelCat = new Category();
+
         $notes = $modelNote->lireToutesParUser($_SESSION['user_id'], $ordre, $recherche);
-        $categories = (new Category())->tout(); 
+        $categories = $modelCat->tout(); 
 
         require __DIR__ . '/../views/liste.php';
     }
 
     public function sauvegarder() {
         $this->verifierConnexion();
-        
         if (!empty($_POST['titre'])) {
-            $imagePath = $this->gererUploadImage();
+            $model = new Note();
             
-            (new Note())->creer(
+            // Gestion de l'image (si tu as ajouté cette option)
+            $imagePath = null;
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+                $nom = time() . '_' . $_FILES['image']['name'];
+                move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/' . $nom);
+                $imagePath = 'uploads/' . $nom;
+            }
+
+            $model->creer(
                 $_POST['titre'], 
                 $_POST['contenu'] ?? '', 
                 $_SESSION['user_id'], 
@@ -43,20 +54,45 @@ class NoteController {
                 !empty($_POST['date_rappel']) ? $_POST['date_rappel'] : null,
                 $imagePath
             );
-            $_SESSION['flash'] = ['type' => 'success', 'message' => '✨ Note MindFlow ajoutée !'];
         }
         header('Location: index.php');
+        exit();
     }
 
+    // --- CETTE MÉTHODE MANQUAIT (ERREUR LIGNE 62) ---
+    public function editerNote() {
+        $this->verifierConnexion();
+        if (isset($_GET['id'])) {
+            $modelNote = new Note();
+            $modelCat = new Category();
+            
+            $note = $modelNote->lireUne($_GET['id']);
+            $categories = $modelCat->tout(); 
+            
+            if (!$note || $note['user_id'] != $_SESSION['user_id']) {
+                header('Location: index.php');
+                exit();
+            }
+            require __DIR__ . '/../views/editer.php';
+        }
+    }
+
+    // --- CETTE MÉTHODE MANQUAIT AUSSI ---
     public function mettreAJour() {
         $this->verifierConnexion();
-        if (isset($_POST['id'])) {
+        if (isset($_POST['id']) && !empty($_POST['titre'])) {
+            $model = new Note();
+            
+            // On récupère l'image actuelle par défaut
             $imagePath = $_POST['ancienne_image'] ?? null;
-            if (!empty($_FILES['image']['name'])) {
-                $imagePath = $this->gererUploadImage();
+            // Si une nouvelle image est uploadée
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+                $nom = time() . '_' . $_FILES['image']['name'];
+                move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/' . $nom);
+                $imagePath = 'uploads/' . $nom;
             }
 
-            (new Note())->modifier(
+            $model->modifier(
                 $_POST['id'], 
                 $_POST['titre'], 
                 $_POST['contenu'], 
@@ -66,30 +102,36 @@ class NoteController {
             );
         }
         header('Location: index.php');
+        exit();
     }
 
-    private function gererUploadImage() {
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
-            $dossier = 'uploads/';
-            if (!is_dir($dossier)) mkdir($dossier, 0777, true);
-            
-            $nom = time() . '_' . basename($_FILES['image']['name']);
-            $cheminComplet = $dossier . $nom;
-            
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $cheminComplet)) {
-                return $cheminComplet;
-            }
+    // --- CETTE MÉTHODE MANQUAIT AUSSI ---
+    public function supprimerNote() {
+        $this->verifierConnexion();
+        if (isset($_GET['id'])) {
+            $model = new Note();
+            $model->supprimer($_GET['id'], $_SESSION['user_id']);
         }
-        return null;
+        header('Location: index.php');
+        exit();
+    }
+
+    public function changerStatut() {
+        $this->verifierConnexion();
+        if (isset($_GET['id'])) {
+            $model = new Note();
+            $model->toggleStatut($_GET['id'], $_SESSION['user_id']);
+        }
+        header('Location: index.php');
+        exit();
     }
 
     public function supprimerMonCompte() {
         $this->verifierConnexion();
-        (new Note())->supprimerToutUtilisateur($_SESSION['user_id']);
+        $model = new Note();
+        $model->supprimerToutUtilisateur($_SESSION['user_id']);
         session_destroy();
         header('Location: index.php?action=home');
         exit();
     }
-
-    // Ajoutez ici les méthodes supprimerNote(), editerNote(), etc. en utilisant verifierConnexion()
 }
