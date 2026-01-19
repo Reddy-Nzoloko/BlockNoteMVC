@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="logo.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <title>Mes Notes | MindFlow</title>
     <style>
@@ -96,7 +97,7 @@
             </form>
             <a href="index.php?tri=<?= ($_GET['tri'] ?? 'desc') === 'asc' ? 'desc' : 'asc' ?>" 
                class="bg-gray-800 border border-gray-700 px-4 py-3 rounded-xl text-sm whitespace-nowrap hover:bg-gray-700 transition">
-                <?= ($_GET['tri'] ?? 'desc') === 'asc' ? '⏳ Plus ancien' : '🔥 Plus récent' ?>
+                <?= ($_GET['tri'] ?? 'desc') === 'asc' ? '⏳ Plus ancien' : 'Plus récent' ?>
             </a>
         </div>
 

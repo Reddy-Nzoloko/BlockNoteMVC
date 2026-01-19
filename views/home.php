@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindFlow | Libérez votre esprit, organisez votre vie.</title>
+    <title>MindFlow </title>
+        <link rel="icon" href="logo.png" type="image/x-icon">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script>
@@ -60,7 +62,7 @@
             
             <div class="flex flex-col sm:flex-row justify-center gap-4 mb-20 animate__animated animate__fadeInUp animate__delay-2s">
                 <a href="index.php?action=register" class="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-bold rounded-full shadow-xl shadow-indigo-500/30 hover:scale-105 transition transform active:scale-95">
-                    🚀 Créer mon espace MindFlow
+                     Créer mon espace MindFlow
                 </a>
                 <a href="#features" class="px-8 py-4 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white text-lg font-bold rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 transition transform active:scale-95">
                     Découvrir les fonctionnalités
@@ -72,7 +74,7 @@
                     <div class="aspect-video rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center relative">
                          <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-purple-500/10 z-0"></div>
                          <div class="text-center z-10 p-10">
-                             <span class="text-6xl mb-4 block">📱💻</span>
+                             <span class="text-6xl mb-4 block">💻</span>
                              <p class="text-gray-500 dark:text-gray-400 font-bold text-lg">Capture d'écran de votre interface MindFlow</p>
                              <p class="text-sm text-gray-400">(Vos notes, vos catégories, vos rappels en un coup d'œil)</p>
                          </div>
@@ -135,8 +137,8 @@
                 </span>
             </div>
             <p class="text-gray-500 dark:text-gray-400 text-sm">
-                &copy; 2026 MindFlow. Tous droits réservés. <br>Créé avec passion pour la productivité.
-            </p>
+                &copy; 2026 MindFlow. Tous droits réservés. <br>Créé avec passion pour la productivité. RedDev
+            </p> 
         </div>
     </footer>
 

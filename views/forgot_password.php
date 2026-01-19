@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="logo.png" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>MindFlow</title>
 </head>
