@@ -65,3 +65,28 @@ switch($action) {
         $noteCtrl->afficherAccueil();
         break;
 }
+
+
+
+
+
+Fonction dans ma page note controleur 
+public function afficherAccueil() {
+        $ordre = (isset($_GET['tri']) && $_GET['tri'] == 'asc') ? 'ASC' : 'DESC';
+        $recherche = isset($_GET['q']) ? $_GET['q'] : '';
+
+        $modelNote = new Note();
+        $modelCat = new Category();
+
+        // Récupère les notes filtrées
+        $notes = $modelNote->lireToutesParUser($_SESSION['user_id'], $ordre, $recherche);
+        // Récupère les catégories pour le formulaire
+        $categories = $modelCat->tout(); 
+
+        require __DIR__ . '/../views/liste.php';
+    }
+
+
+
+    Prochaine question
+    

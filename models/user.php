@@ -26,4 +26,13 @@ class User {
         }
         return false;
     }
+    public function supprimer($id) {
+    // 1. Supprimer d'abord les notes de l'utilisateur
+    $reqNotes = $this->db->prepare('DELETE FROM notes WHERE user_id = ?');
+    $reqNotes->execute([$id]);
+
+    // 2. Supprimer l'utilisateur
+    $reqUser = $this->db->prepare('DELETE FROM users WHERE id = ?');
+    return $reqUser->execute([$id]);
+}
 }
