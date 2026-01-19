@@ -1,7 +1,6 @@
 <?php
-// controllers/NoteController.php
 require_once __DIR__ . '/../models/Note.php';
-require_once __DIR__ . '/../models/Category.php'; // Importation nécessaire ici
+require_once __DIR__ . '/../models/Category.php';
 
 class NoteController {
     
@@ -9,118 +8,88 @@ class NoteController {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        
+    }
+
+    private function verifierConnexion() {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: index.php?action=login');
+            header('Location: index.php?action=home');
             exit();
         }
     }
 
-    // VERSION UNIQUE : Gère le tri, la recherche ET les catégories
     public function afficherAccueil() {
-        $ordre = (isset($_GET['tri']) && $_GET['tri'] == 'asc') ? 'ASC' : 'DESC';
-        $recherche = isset($_GET['q']) ? $_GET['q'] : '';
+        $this->verifierConnexion();
+        $ordre = ($_GET['tri'] ?? 'DESC') === 'asc' ? 'ASC' : 'DESC';
+        $recherche = $_GET['q'] ?? '';
 
         $modelNote = new Note();
-        $modelCat = new Category();
-
-        // Récupère les notes filtrées
         $notes = $modelNote->lireToutesParUser($_SESSION['user_id'], $ordre, $recherche);
-        // Récupère les catégories pour le formulaire
-        $categories = $modelCat->tout(); 
+        $categories = (new Category())->tout(); 
 
         require __DIR__ . '/../views/liste.php';
     }
 
-    // VERSION UNIQUE : Enregistre avec l'ID de catégorie et maintenant time qui est optionnel 
-   public function sauvegarder() {
+    public function sauvegarder() {
+        $this->verifierConnexion();
+        
         if (!empty($_POST['titre'])) {
-            $model = new Note();
+            $imagePath = $this->gererUploadImage();
             
-            // On récupère les données
-            $titre = $_POST['titre'];
-            $contenu = $_POST['contenu'] ?? '';
-            $user_id = $_SESSION['user_id'];
-            $category_id = $_POST['category_id'] ?? null;
-            $date_rappel = !empty($_POST['date_rappel']) ? $_POST['date_rappel'] : null;
-            
-            // Appel au modèle
-            $model->creer($titre, $contenu, $user_id, $category_id, $date_rappel);
-            
-            // MESSAGE FLASH (Pour le côté Pro)
-            $_SESSION['flash'] = [
-                'type' => 'success',
-                'message' => '✨ Note enregistrée avec succès !'
-            ];
+            (new Note())->creer(
+                $_POST['titre'], 
+                $_POST['contenu'] ?? '', 
+                $_SESSION['user_id'], 
+                $_POST['category_id'] ?? null, 
+                !empty($_POST['date_rappel']) ? $_POST['date_rappel'] : null,
+                $imagePath
+            );
+            $_SESSION['flash'] = ['type' => 'success', 'message' => '✨ Note MindFlow ajoutée !'];
         }
-        
-        // REDIRECTION : Crucial pour éviter la page blanche
         header('Location: index.php');
-        exit(); 
     }
-
-    // Exemple pour la suppression
-public function supprimerNote() {
-    if (isset($_GET['id'])) {
-        $model = new Note();
-        $model->supprimer($_GET['id'], $_SESSION['user_id']);
-        
-        // On crée le message flash
-        $_SESSION['flash'] = [
-            'type' => 'success',
-            'message' => 'La note a été supprimée avec succès !'
-        ];
-    }
-    header('Location: index.php');
-}
-    public function editerNote() {
-    if (isset($_GET['id'])) {
-        $modelNote = new Note();
-        $modelCat = new Category();
-        
-        // 1. On récupère les données de la note précise
-        $note = $modelNote->lireUne($_GET['id']);
-        // 2. On récupère les catégories pour la liste déroulante
-        $categories = $modelCat->tout(); 
-        
-        // 3. Vérification de sécurité
-        if (!$note || $note['user_id'] != $_SESSION['user_id']) {
-            header('Location: index.php');
-            exit();
-        }
-
-        // 4. ON APPELLE LA VUE (la variable $note sera disponible dedans)
-        require __DIR__ . '/../views/editer.php';
-    }
-}
 
     public function mettreAJour() {
-    if (isset($_POST['id']) && !empty($_POST['titre'])) {
-        $model = new Note();
-        
-        $id = $_POST['id'];
-        $titre = $_POST['titre'];
-        $contenu = $_POST['contenu'];
-        $category_id = $_POST['category_id'];
-        // Si la date est vide, on envoie null
-        $date_rappel = !empty($_POST['date_rappel']) ? $_POST['date_rappel'] : null;
+        $this->verifierConnexion();
+        if (isset($_POST['id'])) {
+            $imagePath = $_POST['ancienne_image'] ?? null;
+            if (!empty($_FILES['image']['name'])) {
+                $imagePath = $this->gererUploadImage();
+            }
 
-        // On passe TOUT au modèle
-        $resultat = $model->modifier($id, $titre, $contenu, $category_id, $date_rappel);
-        
-        if ($resultat) {
-            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Note mise à jour !'];
-        }
-    }
-    header('Location: index.php');
-    exit();
-}
-
-    public function changerStatut() {
-        if (isset($_GET['id'])) {
-            $model = new Note();
-            $model->toggleStatut($_GET['id'], $_SESSION['user_id']);
+            (new Note())->modifier(
+                $_POST['id'], 
+                $_POST['titre'], 
+                $_POST['contenu'], 
+                $_POST['category_id'], 
+                !empty($_POST['date_rappel']) ? $_POST['date_rappel'] : null,
+                $imagePath
+            );
         }
         header('Location: index.php');
     }
-} // Fin de la classe
+
+    private function gererUploadImage() {
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+            $dossier = 'uploads/';
+            if (!is_dir($dossier)) mkdir($dossier, 0777, true);
+            
+            $nom = time() . '_' . basename($_FILES['image']['name']);
+            $cheminComplet = $dossier . $nom;
+            
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $cheminComplet)) {
+                return $cheminComplet;
+            }
+        }
+        return null;
+    }
+
+    public function supprimerMonCompte() {
+        $this->verifierConnexion();
+        (new Note())->supprimerToutUtilisateur($_SESSION['user_id']);
+        session_destroy();
+        header('Location: index.php?action=home');
+        exit();
+    }
+
+    // Ajoutez ici les méthodes supprimerNote(), editerNote(), etc. en utilisant verifierConnexion()
+}

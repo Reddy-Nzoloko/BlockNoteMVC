@@ -1,48 +1,60 @@
 <?php
-// index.php
 session_start();
+ini_set('display_errors', 1); // Pour voir les erreurs s'il y en a
+error_reporting(E_ALL);
 
-// On récupère l'action, par défaut c'est 'home' maintenant
-$action = isset($_GET['action']) ? $_GET['action'] : 'home';
+$action = $_GET['action'] ?? 'home';
 
-// Import des contrôleurs
 require_once 'controllers/NoteController.php';
 require_once 'controllers/AuthController.php';
 
-$noteCtrl = new NoteController();
-$authCtrl = new AuthController();
-
 switch ($action) {
     case 'home':
-        // Si l'utilisateur est déjà connecté, on peut le rediriger vers ses notes
-        // Sinon, on montre la page de présentation
         if (isset($_SESSION['user_id'])) {
-            $noteCtrl->afficherAccueil();
+            (new NoteController())->afficherAccueil();
         } else {
-            require 'views/home.php';
+            require __DIR__ . '/views/home.php';
         }
         break;
 
     case 'login':
-        require 'views/login.php';
+        require __DIR__ . '/views/login.php';
         break;
 
     case 'register':
-        require 'views/register.php';
+        require __DIR__ . '/views/register.php';
         break;
 
     case 'index':
-        // C'est ici qu'on affiche la liste des notes après connexion
-        $noteCtrl->afficherAccueil();
+        (new NoteController())->afficherAccueil();
         break;
 
     case 'ajouter':
-        $noteCtrl->sauvegarder();
+        (new NoteController())->sauvegarder();
         break;
 
-    // ... gardez vos autres cases (supprimer, editer, etc.) ...
+    case 'editer':
+        (new NoteController())->editerNote();
+        break;
+
+    case 'mettreAJour':
+        (new NoteController())->mettreAJour();
+        break;
+
+    case 'supprimer':
+        (new NoteController())->supprimerNote();
+        break;
+
+    case 'supprimer_compte':
+        (new NoteController())->supprimerMonCompte();
+        break;
+
+    case 'logout':
+        session_destroy();
+        header('Location: index.php?action=home');
+        break;
 
     default:
-        require 'views/home.php';
+        header('Location: index.php?action=home');
         break;
 }

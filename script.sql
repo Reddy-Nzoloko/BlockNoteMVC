@@ -52,3 +52,6 @@ CREATE TABLE password_resets (
 
 -- ajout d'une table de notification pour que l'application notifis la personne 
 ALTER TABLE notes ADD COLUMN date_rappel DATETIME NULL;
+
+-- gestion des image dans la page 
+ALTER TABLE notes ADD COLUMN image_path VARCHAR(255) NULL AFTER contenu;

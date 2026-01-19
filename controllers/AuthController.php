@@ -67,6 +67,18 @@ public function traiterRecuperation() {
     }
     header('Location: index.php?action=login');
 }
+// Suppression du compte utilisateur 
+public function supprimerCompte() {
+    if (isset($_SESSION['user_id'])) {
+        $model = new User();
+        $model->supprimer($_SESSION['user_id']);
+        
+        // On détruit la session après suppression
+        session_destroy();
+        header('Location: index.php?action=home');
+        exit();
+    }
+}
 
     public function logout() {
         session_start();
