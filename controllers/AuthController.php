@@ -53,24 +53,31 @@ class AuthController {
     }
 
     // Cette méthode correspond à 'traiter_register'
-    public function register() {
-        if (!empty($_POST['email']) && !empty($_POST['password'])) {
-            $model = new User();
-            $success = $model->inscrire($_POST['email'], $_POST['password']);
-            
-            if ($success) {
-                $_SESSION['flash'] = [
-                    'type' => 'success',
-                    'message' => 'Compte créé avec succès ! Connectez-vous.'
-                ];
-                header('Location: index.php?action=login');
-                exit();
-            } else {
-                header('Location: index.php?action=register&erreur=1');
-                exit();
-            }
+    // Dans controllers/AuthController.php, méthode register()
+
+public function register() {
+    if (!empty($_POST['email']) && !empty($_POST['password'])) {
+        $model = new User();
+        $success = $model->inscrire($_POST['email'], $_POST['password']);
+        
+        if ($success) {
+            $_SESSION['flash'] = [
+                'type' => 'success',
+                'message' => 'Compte créé ! Vous pouvez vous connecter.'
+            ];
+            header('Location: index.php?action=login');
+            exit();
+        } else {
+            // C'est ici qu'on gère le doublon
+            $_SESSION['flash'] = [
+                'type' => 'error',
+                'message' => 'Cette adresse email est déjà utilisée.'
+            ];
+            header('Location: index.php?action=register');
+            exit();
         }
     }
+}
 
     public function logout() {
         session_destroy();

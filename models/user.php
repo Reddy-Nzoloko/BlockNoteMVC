@@ -9,11 +9,26 @@ class User {
         } catch (Exception $e) { die('Erreur : ' . $e->getMessage()); }
     }
 
-    public function inscrire($email, $password) {
-        $hash = password_hash($password, PASSWORD_BCRYPT); // Hachage sécurisé
-        $req = $this->db->prepare('INSERT INTO users (email, password) VALUES (?, ?)');
-        return $req->execute([$email, $hash]);
+   // Dans models/User.php
+
+public function inscrire($email, $password) {
+    // 1. Vérifier si l'email existe déjà
+    $check = $this->db->prepare("SELECT id FROM users WHERE email = ?");
+    $check->execute([$email]);
+    
+    if ($check->rowCount() > 0) {
+        return false; // L'email est déjà pris
     }
+
+    // 2. Si non, on procède à l'inscription
+    $sql = "INSERT INTO users (email, password) VALUES (?, ?)";
+    $req = $this->db->prepare($sql);
+    
+    // Hachage du mot de passe (si ce n'est pas déjà fait dans le contrôleur)
+    $hashed = password_hash($password, PASSWORD_BCRYPT);
+    
+    return $req->execute([$email, $hashed]);
+}
 
     public function connecter($email, $password) {
         $req = $this->db->prepare('SELECT * FROM users WHERE email = ?');
