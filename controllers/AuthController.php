@@ -19,8 +19,26 @@ class AuthController {
     // Cette méthode correspond à 'traiter_login' dans ton index.php
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'] ?? '';
+            $email = trim($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
+
+            if (empty($email) || empty($password)) {
+                $_SESSION['flash'] = [
+                    'type' => 'error',
+                    'message' => 'Veuillez remplir tous les champs.'
+                ];
+                header('Location: index.php?action=login');
+                exit();
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $_SESSION['flash'] = [
+                    'type' => 'error',
+                    'message' => 'Adresse email invalide.'
+                ];
+                header('Location: index.php?action=login');
+                exit();
+            }
 
             $model = new User();
             // On suppose que ta méthode connecter() vérifie l'email ET le mot de passe
@@ -56,9 +74,39 @@ class AuthController {
     // Dans controllers/AuthController.php, méthode register()
 
 public function register() {
-    if (!empty($_POST['email']) && !empty($_POST['password'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+
+        if (empty($email) || empty($password)) {
+            $_SESSION['flash'] = [
+                'type' => 'error',
+                'message' => 'Veuillez remplir tous les champs.'
+            ];
+            header('Location: index.php?action=register');
+            exit();
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['flash'] = [
+                'type' => 'error',
+                'message' => 'Adresse email invalide.'
+            ];
+            header('Location: index.php?action=register');
+            exit();
+        }
+
+        if (strlen($password) < 6) {
+            $_SESSION['flash'] = [
+                'type' => 'error',
+                'message' => 'Le mot de passe doit contenir au moins 6 caractères.'
+            ];
+            header('Location: index.php?action=register');
+            exit();
+        }
+
         $model = new User();
-        $success = $model->inscrire($_POST['email'], $_POST['password']);
+        $success = $model->inscrire($email, $password);
         
         if ($success) {
             $_SESSION['flash'] = [
