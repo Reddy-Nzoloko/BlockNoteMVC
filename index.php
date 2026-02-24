@@ -27,26 +27,31 @@ switch ($action) {
         break;
 
     case 'login':
-        require __DIR__ . '/views/login.php';
+        (new AuthController())->afficherLogin();
         break;
 
     case 'register':
-        require __DIR__ . '/views/register.php';
+        (new AuthController())->afficherRegister();
         break;
 
-    // --- LOGIQUE D'AUTHENTIFICATION (C'est ici qu'on traite les formulaires) ---
+    case 'forgot_password':
+        require __DIR__ . '/views/forgot_password.php';
+        break;
+
     case 'traiter_login':
-        (new AuthController())->login(); // Cette méthode doit rediriger vers index.php?action=index
+        (new AuthController())->login();
         break;
 
     case 'traiter_register':
         (new AuthController())->register();
         break;
 
+    case 'traiter_recuperation':
+        (new AuthController())->traiterRecuperation();
+        break;
+
     case 'logout':
-        session_destroy();
-        header('Location: index.php?action=home');
-        exit();
+        (new AuthController())->logout();
         break;
 
     // --- ESPACE UTILISATEUR (Sécurisé par le NoteController) ---
