@@ -8,7 +8,7 @@
     <title>Mes Notes | MindFlow</title>
     <style>
         .note-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .note-card:hover { transform: translateY(-8px); shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .note-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
         /* Style pour masquer l'input file moche */
         .file-upload { position: relative; overflow: hidden; }
         .file-upload input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
@@ -75,7 +75,7 @@
                 </div>
                 <div class="flex flex-col">
                     <label class="text-xs text-gray-500 font-bold mb-1 ml-1 uppercase">📸 Ajouter une image</label>
-                    <div class="file-upload bg-gray-900 border border-gray-700 rounded-xl p-2 text-sm text-center hover:bg-gray-850 transition">
+                    <div class="file-upload bg-gray-900 border border-gray-700 rounded-xl p-2 text-sm text-center hover:bg-gray-700 transition">
                         <span class="text-gray-400">Cliquez pour choisir</span>
                         <input type="file" name="image" accept="image/*">
                     </div>
@@ -92,10 +92,10 @@
                 <input type="hidden" name="action" value="index">
                 <input type="text" name="q" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" 
                        placeholder="Rechercher une idée..." 
-                       class="flex-grow bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:ring-2 ring-indigo-500 outline-none">
+                       class="flex-grow bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none">
                 <button type="submit" class="bg-indigo-600 px-6 rounded-xl hover:bg-indigo-500 transition">🔍</button>
             </form>
-            <a href="index.php?tri=<?= ($_GET['tri'] ?? 'desc') === 'asc' ? 'desc' : 'asc' ?>" 
+            <a href="index.php?action=index&tri=<?= ($_GET['tri'] ?? 'desc') === 'asc' ? 'desc' : 'asc' ?>" 
                class="bg-gray-800 border border-gray-700 px-4 py-3 rounded-xl text-sm whitespace-nowrap hover:bg-gray-700 transition">
                 <?= ($_GET['tri'] ?? 'desc') === 'asc' ? '⏳ Plus ancien' : 'Plus récent' ?>
             </a>
@@ -149,14 +149,16 @@
         if (Notification.permission !== "granted") Notification.requestPermission();
 
         function verifierRappels() {
-            const notes = <?= json_encode($notes) ?>;
+            const notes = <?= json_encode($notes, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) ?>;
             const maintenant = Math.floor(new Date().getTime() / 60000);
 
             notes.forEach(note => {
                 if (note.date_rappel && !note.statut) {
-                    const tRappel = Math.floor(new Date(note.date_rappel).getTime() / 60000);
+                    let rappel = note.date_rappel;
+                    if (typeof rappel === 'string') rappel = rappel.replace(' ', 'T');
+                    const tRappel = Math.floor(new Date(rappel).getTime() / 60000);
                     if (maintenant === tRappel) {
-                        new Notification("⏰ MindFlow : " + note.titre, {
+                        new Notification("⏰ MindFlow : " + (note.titre || 'Rappel'), {
                             body: "Il est temps de s'en occuper !",
                             icon: "https://cdn-icons-png.flaticon.com/512/1792/1792931.png"
                         });

@@ -20,7 +20,7 @@ public function inscrire($email, $password) {
         return false; // L'email est déjà pris
     }
 
-    // 2. Si non, on procède à l'inscription
+    // 2. Si non, on procède à l'inscription 
     $sql = "INSERT INTO users (email, password) VALUES (?, ?)";
     $req = $this->db->prepare($sql);
     
