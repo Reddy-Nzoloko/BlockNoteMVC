@@ -24,8 +24,7 @@
             </div>
             
             <div class="flex items-center space-x-4">
-                <span class="hidden md:inline text-sm text-gray-400">👤 <?= htmlspecialchars($_SESSION['user_email']) ?></span>
-                
+<span class="hidden md:inline text-sm text-gray-400">👤 <?= htmlspecialchars($_SESSION['user_email'] ?? 'Utilisateur') ?></span>                
                 <div class="relative group">
                     <button class="p-2 hover:bg-gray-700 rounded-full transition">⚙️</button>
                     <div class="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-xl shadow-xl hidden group-hover:block animate__animated animate__fadeIn">
